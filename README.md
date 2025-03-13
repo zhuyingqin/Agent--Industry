@@ -1,308 +1,153 @@
-# LangGraph ReAct Agent Template
+# Agent--Industry
 
-[![CI](https://github.com/langchain-ai/react-agent/actions/workflows/unit-tests.yml/badge.svg)](https://github.com/langchain-ai/react-agent/actions/workflows/unit-tests.yml)
-[![Integration Tests](https://github.com/langchain-ai/react-agent/actions/workflows/integration-tests.yml/badge.svg)](https://github.com/langchain-ai/react-agent/actions/workflows/integration-tests.yml)
-[![Open in - LangGraph Studio](https://img.shields.io/badge/Open_in-LangGraph_Studio-00324d.svg?logo=data:image/svg%2bxml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4NS4zMzMiIGhlaWdodD0iODUuMzMzIiB2ZXJzaW9uPSIxLjAiIHZpZXdCb3g9IjAgMCA2NCA2NCI+PHBhdGggZD0iTTEzIDcuOGMtNi4zIDMuMS03LjEgNi4zLTYuOCAyNS43LjQgMjQuNi4zIDI0LjUgMjUuOSAyNC41QzU3LjUgNTggNTggNTcuNSA1OCAzMi4zIDU4IDcuMyA1Ni43IDYgMzIgNmMtMTIuOCAwLTE2LjEuMy0xOSAxLjhtMzcuNiAxNi42YzIuOCAyLjggMy40IDQuMiAzLjQgNy42cy0uNiA0LjgtMy40IDcuNkw0Ny4yIDQzSDE2LjhsLTMuNC0zLjRjLTQuOC00LjgtNC44LTEwLjQgMC0xNS4ybDMuNC0zLjRoMzAuNHoiLz48cGF0aCBkPSJNMTguOSAyNS42Yy0xLjEgMS4zLTEgMS43LjQgMi41LjkuNiAxLjcgMS44IDEuNyAyLjcgMCAxIC43IDIuOCAxLjYgNC4xIDEuNCAxLjkgMS40IDIuNS4zIDMuMi0xIC42LS42LjkgMS40LjkgMS41IDAgMi43LS41IDIuNy0xIDAtLjYgMS4xLS44IDIuNi0uNGwyLjYuNy0xLjgtMi45Yy01LjktOS4zLTkuNC0xMi4zLTExLjUtOS44TTM5IDI2YzAgMS4xLS45IDIuNS0yIDMuMi0yLjQgMS41LTIuNiAzLjQtLjUgNC4yLjguMyAyIDEuNyAyLjUgMy4xLjYgMS41IDEuNCAyLjMgMiAyIDEuNS0uOSAxLjItMy41LS40LTMuNS0yLjEgMC0yLjgtMi44LS44LTMuMyAxLjYtLjQgMS42LS41IDAtLjYtMS4xLS4xLTEuNS0uNi0xLjItMS42LjctMS43IDMuMy0yLjEgMy41LS41LjEuNS4yIDEuNi4zIDIuMiAwIC43LjkgMS40IDEuOSAxLjYgMi4xLjQgMi4zLTIuMy4yLTMuMi0uOC0uMy0yLTEuNy0yLjUtMy4xLTEuMS0zLTMtMy4zLTMtLjUiLz48L3N2Zz4=)](https://langgraph-studio.vercel.app/templates/open?githubUrl=https://github.com/langchain-ai/react-agent)
+基于LangGraph的智能代理系统，专为行业应用场景设计。本项目基于ReAct代理模式，通过LangGraph实现，可以灵活扩展到多种工具和行业应用场景。
 
-This template showcases a [ReAct agent](https://arxiv.org/abs/2210.03629) implemented using [LangGraph](https://github.com/langchain-ai/langgraph), designed for [LangGraph Studio](https://github.com/langchain-ai/langgraph-studio). ReAct agents are uncomplicated, prototypical agents that can be flexibly extended to many tools.
+![智能代理系统架构](./static/studio_ui.png)
 
-![Graph view in LangGraph studio UI](./static/studio_ui.png)
+## 功能介绍
 
-The core logic, defined in `src/react_agent/graph.py`, demonstrates a flexible ReAct agent that iteratively reasons about user queries and executes actions, showcasing the power of this approach for complex problem-solving tasks.
+Agent--Industry智能代理系统：
 
-## What it does
+1. 接收用户**查询**作为输入
+2. 分析查询并决定采取的行动
+3. 使用可用工具执行所选操作
+4. 观察操作结果
+5. 重复步骤2-4，直到能够提供最终答案
 
-The ReAct agent:
+系统默认配置了一套基本工具，但可以根据不同行业和应用场景轻松扩展自定义工具。
 
-1. Takes a user **query** as input
-2. Reasons about the query and decides on an action
-3. Executes the chosen action using available tools
-4. Observes the result of the action
-5. Repeats steps 2-4 until it can provide a final answer
+### 增强的规划与执行能力
 
-By default, it's set up with a basic set of tools, but can be easily extended with custom tools to suit various use cases.
+代理系统支持增强的工作流程，具有明确的规划和逐步执行功能：
 
-### Enhanced Planning and Execution
+1. **规划阶段**：代理首先分析用户的请求，创建详细的执行计划，将复杂任务分解为可管理的步骤。
+2. **执行阶段**：代理按顺序执行每个步骤，使用适当的工具完成每个步骤并跟踪进度。
+3. **响应阶段**：完成所有步骤后，代理总结结果并提供全面的答案。
 
-The agent now supports an enhanced workflow with explicit planning and step-by-step execution:
+这种结构化方法帮助代理更有效地处理复杂任务：
+- 将复杂问题分解为更小、更易管理的步骤
+- 在执行单个步骤的同时保持对总体目标的关注
+- 提供代理推理过程的更好可见性
+- 确保解决用户请求的所有方面
 
-1. **Planning Phase**: The agent first analyzes the user's request and creates a detailed execution plan, breaking down complex tasks into manageable steps.
-2. **Execution Phase**: The agent executes each step in sequence, using appropriate tools to complete each step and tracking progress.
-3. **Response Phase**: After completing all steps, the agent summarizes the results and provides a comprehensive answer.
+### 可用工具
 
-This structured approach helps the agent tackle complex tasks more effectively by:
-- Breaking down complex problems into smaller, manageable steps
-- Maintaining focus on the overall goal while executing individual steps
-- Providing better visibility into the agent's reasoning process
-- Ensuring all aspects of the user's request are addressed
+代理系统配备了多种内置工具：
+- **搜索**：使用Tavily的网络搜索功能
+- **Python执行**：执行Python代码片段
+- **Bash**：运行shell命令
+- **学术搜索**：在Google Scholar上搜索学术文献并总结发现
+- **规划**：为复杂任务创建和管理执行计划
 
-### Available Tools
+### 浏览器搜索功能
 
-The agent comes with several built-in tools:
-- **Search**: Web search capabilities using Tavily
-- **Python Execute**: Execute Python code snippets
-- **Bash**: Run shell commands
-- **ScholarSearch**: Search academic literature on Google Scholar and summarize findings
-- **Planning**: Create and manage execution plans for complex tasks
+我们添加了强大的浏览器搜索功能，允许代理：
 
-### Browser Search Function
+1. **自动识别搜索输入字段**：它可以识别各种常见的搜索输入字段，包括来自百度、谷歌和GitHub等流行网站的字段。
+2. **输入搜索词**：它自动将用户指定的搜索词输入到搜索输入字段中。
+3. **提交搜索请求**：它支持点击搜索按钮或提交表单来执行搜索。
+4. **检索搜索结果**：它等待搜索结果加载并返回页面内容。
 
-We've added a powerful browser search function, allowing the agent to:
-
-1. **Automatically recognize search input fields**: It can recognize various common search input fields, including those from popular websites like Baidu, Google, and GitHub.
-2. **Enter search terms**: It automatically enters the search term specified by the user into the search input field.
-3. **Submit search requests**: It supports both clicking the search button or submitting a form to execute the search.
-4. **Retrieve search results**: It waits for the search results to load and returns the page content.
-
-#### Usage
+#### 使用方法
 
 ```python
-# Create an instance of the BrowserUseTool
+# 创建BrowserUseTool实例
 browser_tool = BrowserUseTool()
 
-# Execute search
+# 执行搜索
 result = await browser_tool.execute(
-    url='https://www.baidu.com',  # URL of the website to search
-    task='Search for Python tutorials on Baidu',  # Task description
-    action='search',  # Specify the action as search
-    parameters={'search_query': 'Python tutorials'}  # Search query term
+    url='https://www.baidu.com',  # 要搜索的网站URL
+    task='在百度上搜索Python教程',  # 任务描述
+    action='search',  # 指定操作为搜索
+    parameters={'search_query': 'Python教程'}  # 搜索查询词
 )
 ```
 
-#### Supported Websites
+#### 支持的网站
 
-The current version has been tested on the following websites:
+当前版本已在以下网站上进行了测试：
 
-- **Baidu**: It can accurately recognize search input fields and execute search operations.
-- **GitHub**: It can recognize search input fields and submit buttons to execute search operations.
-- **Google**: It can execute search operations using a generic method by recognizing search elements.
+- **百度**：它可以准确识别搜索输入字段并执行搜索操作。
+- **GitHub**：它可以识别搜索输入字段和提交按钮来执行搜索操作。
+- **谷歌**：它可以通过识别搜索元素，使用通用方法执行搜索操作。
 
-## Getting Started
+## 开始使用
 
-Assuming you have already [installed LangGraph Studio](https://github.com/langchain-ai/langgraph-studio?tab=readme-ov-file#download), to set up:
+假设你已经安装了LangGraph Studio，按照以下步骤设置：
 
-1. Run the setup script to install all dependencies and set up environment variables:
+1. 运行设置脚本安装所有依赖项并设置环境变量：
 
 ```bash
 bash setup.sh
 ```
 
-Or manually:
+或手动：
 
 ```bash
 cp .env.example .env
 ```
 
-2. Define required API keys in your `.env` file.
+2. 在`.env`文件中定义所需的API密钥。
 
-The primary [search tool](./src/react_agent/tools.py) [^1] used is [Tavily](https://tavily.com/). Create an API key [here](https://app.tavily.com/sign-in).
+主要使用的搜索工具是[Tavily](https://tavily.com/)。在[这里](https://app.tavily.com/sign-in)创建API密钥。
 
-For the ScholarSearch tool, you'll need a [SerpAPI](https://serpapi.com/) API key. Add it to your `.env` file:
+对于学术搜索工具，你需要[SerpAPI](https://serpapi.com/)的API密钥。将其添加到你的`.env`文件中：
 
 ```
 SERPAPI_API_KEY=your-serpapi-api-key
 ```
 
-<!--
-Setup instruction auto-generated by `langgraph template lock`. DO NOT EDIT MANUALLY.
--->
+### 设置模型
 
-### Setup Model
-
-The defaults values for `model` are shown below:
+`model`的默认值如下：
 
 ```yaml
 model: anthropic/claude-3-5-sonnet-20240620
 ```
 
-Follow the instructions below to get set up, or pick one of the additional options.
+按照以下说明进行设置，或选择其他选项。
 
 #### Anthropic
 
-To use Anthropic's chat models:
+使用Anthropic的聊天模型：
 
-1. Sign up for an [Anthropic API key](https://console.anthropic.com/) if you haven't already.
-2. Once you have your API key, add it to your `.env` file:
+1. 如果你还没有，请注册[Anthropic API密钥](https://console.anthropic.com/)。
+2. 获得API密钥后，将其添加到你的`.env`文件中：
 
 ```
 ANTHROPIC_API_KEY=your-api-key
 ```
+
 #### OpenAI
 
-To use OpenAI's chat models:
+使用OpenAI的聊天模型：
 
-1. Sign up for an [OpenAI API key](https://platform.openai.com/signup).
-2. Once you have your API key, add it to your `.env` file:
+1. 注册[OpenAI API密钥](https://platform.openai.com/signup)。
+2. 获得API密钥后，将其添加到你的`.env`文件中：
 ```
 OPENAI_API_KEY=your-api-key
 ```
 
+3. 根据需要自定义代码。
+4. 在LangGraph Studio中打开文件夹！
 
+## 如何自定义
 
+1. **添加新工具**：通过在`src/react_agent/tools.py`中添加新工具来扩展代理的功能。这些可以是执行特定任务的任何Python函数。
+2. **选择不同的模型**：我们默认使用Anthropic的Claude 3 Sonnet。你可以通过配置使用`provider/model-name`格式选择兼容的聊天模型。例如：`openai/gpt-4-turbo-preview`。
+3. **自定义提示**：我们在`src/react_agent/prompts.py`中提供了默认的系统提示。你可以在Studio中通过配置轻松更新它。
 
+你还可以通过以下方式快速扩展此模板：
 
-<!--
-End setup instructions
--->
+- 在`src/react_agent/graph.py`中修改代理的推理过程。
+- 调整ReAct循环或向代理的决策过程添加额外步骤。
 
+## 开发
 
-3. Customize whatever you'd like in the code.
-4. Open the folder LangGraph Studio!
+在迭代图形时，你可以编辑过去的状态并从过去的状态重新运行应用程序以调试特定节点。本地更改将通过热重载自动应用。尝试在代理调用工具之前添加中断，更新`src/react_agent/configuration.py`中的默认系统消息以采用角色，或添加其他节点和边！
 
-## How to customize
+后续请求将附加到同一线程。你可以使用右上角的`+`按钮创建一个全新的线程，清除之前的历史记录。
 
-1. **Add new tools**: Extend the agent's capabilities by adding new tools in [tools.py](./src/react_agent/tools.py). These can be any Python functions that perform specific tasks.
-2. **Select a different model**: We default to Anthropic's Claude 3 Sonnet. You can select a compatible chat model using `provider/model-name` via configuration. Example: `openai/gpt-4-turbo-preview`.
-3. **Customize the prompt**: We provide a default system prompt in [prompts.py](./src/react_agent/prompts.py). You can easily update this via configuration in the studio.
+你可以在[LangGraph](https://github.com/langchain-ai/langgraph)找到最新的（正在建设中的）文档，包括示例和其他参考资料。使用这些指南可以帮助你选择适合在这里适应你的用例的正确模式。
 
-You can also quickly extend this template by:
-
-- Modifying the agent's reasoning process in [graph.py](./src/react_agent/graph.py).
-- Adjusting the ReAct loop or adding additional steps to the agent's decision-making process.
-
-## Development
-
-While iterating on your graph, you can edit past state and rerun your app from past states to debug specific nodes. Local changes will be automatically applied via hot reload. Try adding an interrupt before the agent calls tools, updating the default system message in `src/react_agent/configuration.py` to take on a persona, or adding additional nodes and edges!
-
-Follow up requests will be appended to the same thread. You can create an entirely new thread, clearing previous history, using the `+` button in the top right.
-
-You can find the latest (under construction) docs on [LangGraph](https://github.com/langchain-ai/langgraph) here, including examples and other references. Using those guides can help you pick the right patterns to adapt here for your use case.
-
-LangGraph Studio also integrates with [LangSmith](https://smith.langchain.com/) for more in-depth tracing and collaboration with teammates.
-
-[^1]: https://python.langchain.com/docs/concepts/#tools
-
-<!--
-Configuration auto-generated by `langgraph template lock`. DO NOT EDIT MANUALLY.
-{
-  "config_schemas": {
-    "agent": {
-      "type": "object",
-      "properties": {
-        "model": {
-          "type": "string",
-          "default": "anthropic/claude-3-5-sonnet-20240620",
-          "description": "The name of the language model to use for the agent's main interactions. Should be in the form: provider/model-name.",
-          "environment": [
-            {
-              "value": "anthropic/claude-1.2",
-              "variables": "ANTHROPIC_API_KEY"
-            },
-            {
-              "value": "anthropic/claude-2.0",
-              "variables": "ANTHROPIC_API_KEY"
-            },
-            {
-              "value": "anthropic/claude-2.1",
-              "variables": "ANTHROPIC_API_KEY"
-            },
-            {
-              "value": "anthropic/claude-3-5-sonnet-20240620",
-              "variables": "ANTHROPIC_API_KEY"
-            },
-            {
-              "value": "anthropic/claude-3-haiku-20240307",
-              "variables": "ANTHROPIC_API_KEY"
-            },
-            {
-              "value": "anthropic/claude-3-opus-20240229",
-              "variables": "ANTHROPIC_API_KEY"
-            },
-            {
-              "value": "anthropic/claude-3-sonnet-20240229",
-              "variables": "ANTHROPIC_API_KEY"
-            },
-            {
-              "value": "anthropic/claude-instant-1.2",
-              "variables": "ANTHROPIC_API_KEY"
-            },
-            {
-              "value": "openai/gpt-3.5-turbo",
-              "variables": "OPENAI_API_KEY"
-            },
-            {
-              "value": "openai/gpt-3.5-turbo-0125",
-              "variables": "OPENAI_API_KEY"
-            },
-            {
-              "value": "openai/gpt-3.5-turbo-0301",
-              "variables": "OPENAI_API_KEY"
-            },
-            {
-              "value": "openai/gpt-3.5-turbo-0613",
-              "variables": "OPENAI_API_KEY"
-            },
-            {
-              "value": "openai/gpt-3.5-turbo-1106",
-              "variables": "OPENAI_API_KEY"
-            },
-            {
-              "value": "openai/gpt-3.5-turbo-16k",
-              "variables": "OPENAI_API_KEY"
-            },
-            {
-              "value": "openai/gpt-3.5-turbo-16k-0613",
-              "variables": "OPENAI_API_KEY"
-            },
-            {
-              "value": "openai/gpt-4",
-              "variables": "OPENAI_API_KEY"
-            },
-            {
-              "value": "openai/gpt-4-0125-preview",
-              "variables": "OPENAI_API_KEY"
-            },
-            {
-              "value": "openai/gpt-4-0314",
-              "variables": "OPENAI_API_KEY"
-            },
-            {
-              "value": "openai/gpt-4-0613",
-              "variables": "OPENAI_API_KEY"
-            },
-            {
-              "value": "openai/gpt-4-1106-preview",
-              "variables": "OPENAI_API_KEY"
-            },
-            {
-              "value": "openai/gpt-4-32k",
-              "variables": "OPENAI_API_KEY"
-            },
-            {
-              "value": "openai/gpt-4-32k-0314",
-              "variables": "OPENAI_API_KEY"
-            },
-            {
-              "value": "openai/gpt-4-32k-0613",
-              "variables": "OPENAI_API_KEY"
-            },
-            {
-              "value": "openai/gpt-4-turbo",
-              "variables": "OPENAI_API_KEY"
-            },
-            {
-              "value": "openai/gpt-4-turbo-preview",
-              "variables": "OPENAI_API_KEY"
-            },
-            {
-              "value": "openai/gpt-4-vision-preview",
-              "variables": "OPENAI_API_KEY"
-            },
-            {
-              "value": "openai/gpt-4o",
-              "variables": "OPENAI_API_KEY"
-            },
-            {
-              "value": "openai/gpt-4o-mini",
-              "variables": "OPENAI_API_KEY"
-            }
-          ]
-        }
-      },
-      "environment": [
-        "TAVILY_API_KEY"
-      ]
-    }
-  }
-}
--->
+LangGraph Studio还与[LangSmith](https://smith.langchain.com/)集成，用于更深入的跟踪和与团队成员的协作。
