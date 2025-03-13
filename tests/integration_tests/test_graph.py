@@ -1,7 +1,10 @@
 import pytest
 from langsmith import unit
 
-from react_agent import graph
+from react_agent import get_graph
+
+# 获取图实例
+graph = get_graph()
 
 
 @pytest.mark.asyncio
