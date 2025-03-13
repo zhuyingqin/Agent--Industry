@@ -114,10 +114,10 @@ class _BashSession:
 
 
 class Bash(BaseTool):
-    """A tool for executing bash commands"""
+    """Bash命令工具。"""
 
     name: str = "bash"
-    description: str = _BASH_DESCRIPTION
+    description: str = "执行bash命令并返回结果。"
     parameters: dict = {
         "type": "object",
         "properties": {

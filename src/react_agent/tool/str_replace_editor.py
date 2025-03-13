@@ -45,10 +45,10 @@ def maybe_truncate(content: str, truncate_after: int | None = MAX_RESPONSE_LEN):
 
 
 class StrReplaceEditor(BaseTool):
-    """A tool for executing bash commands"""
-
+    """字符串替换工具。"""
+    
     name: str = "str_replace_editor"
-    description: str = _STR_REPLACE_EDITOR_DESCRIPTION
+    description: str = "在文本中查找并替换字符串。"
     parameters: dict = {
         "type": "object",
         "properties": {

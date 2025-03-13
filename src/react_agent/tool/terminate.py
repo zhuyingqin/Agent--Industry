@@ -1,3 +1,5 @@
+from typing import Optional
+
 from react_agent.tool.base import BaseTool
 
 
@@ -5,20 +7,27 @@ _TERMINATE_DESCRIPTION = """Terminate the interaction when the request is met OR
 
 
 class Terminate(BaseTool):
-    name: str = "terminate"
-    description: str = _TERMINATE_DESCRIPTION
-    parameters: dict = {
-        "type": "object",
-        "properties": {
-            "status": {
-                "type": "string",
-                "description": "The finish status of the interaction.",
-                "enum": ["success", "failure"],
-            }
-        },
-        "required": ["status"],
-    }
-
-    async def execute(self, status: str) -> str:
+    """终止工具。"""
+    
+    def __init__(self, **data):
+        """初始化Terminate工具。"""
+        super().__init__(
+            name="terminate",
+            description="终止当前任务。",
+            parameters={
+                "type": "object",
+                "properties": {
+                    "status": {
+                        "type": "string",
+                        "description": "终止状态，例如 'success', 'failure', 'canceled'",
+                        "default": "success"
+                    }
+                },
+                "required": []
+            },
+            **data
+        )
+    
+    async def execute(self, status: str = "success") -> str:
         """Finish the current execution"""
         return f"The interaction has been completed with status: {status}"

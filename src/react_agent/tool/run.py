@@ -47,13 +47,10 @@ async def run(
 
 
 class Run(BaseTool):
-    """工具类，用于执行shell命令。"""
+    """运行命令工具。"""
     
     name: str = "run"
-    description: str = """运行shell命令并返回结果。
-使用此工具可以执行各种shell命令，如列出文件、查看文件内容、安装软件包等。
-该工具返回命令的退出代码、标准输出和标准错误。
-"""
+    description: str = "运行shell命令并返回结果。"
     parameters: dict = {
         "type": "object",
         "properties": {
@@ -70,7 +67,7 @@ class Run(BaseTool):
         "required": ["cmd"],
     }
 
-    async def execute(self, cmd: str, timeout: Optional[float] = 120.0) -> str:
+    async def execute(self, cmd: str, timeout: float = 120.0) -> str:
         """
         执行shell命令并返回结果。
 

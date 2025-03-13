@@ -1,169 +1,195 @@
-from typing import Any, List, Optional, Type, Union, get_args, get_origin
+"""
+此模块提供了创建聊天完成的工具。
+"""
 
-from pydantic import BaseModel, Field
+import logging
+import os
+from typing import Any, Dict, List, Optional
 
-from react_agent.tool import BaseTool
+from pydantic import Field
+from react_agent.tool.base import BaseTool
 
+logger = logging.getLogger(__name__)
 
 class CreateChatCompletion(BaseTool):
-    name: str = "create_chat_completion"
-    description: str = (
-        "Creates a structured completion with specified output formatting."
-    )
-
-    # Type mapping for JSON schema
-    type_mapping: dict = {
-        str: "string",
-        int: "integer",
-        float: "number",
-        bool: "boolean",
-        dict: "object",
-        list: "array",
-    }
-    response_type: Optional[Type] = None
-    required: List[str] = Field(default_factory=lambda: ["response"])
-
-    def __init__(self, response_type: Optional[Type] = str):
-        """Initialize with a specific response type."""
-        super().__init__()
-        self.response_type = response_type
-        self.parameters = self._build_parameters()
-
-    def _build_parameters(self) -> dict:
-        """Build parameters schema based on response type."""
-        if self.response_type == str:
-            return {
+    """创建聊天完成的工具。"""
+    
+    def __init__(self, **data):
+        """初始化CreateChatCompletion工具。"""
+        super().__init__(
+            name="create_chat_completion",
+            description="创建聊天完成并返回结果。",
+            parameters={
                 "type": "object",
                 "properties": {
-                    "response": {
+                    "prompt": {
                         "type": "string",
-                        "description": "The response text that should be delivered to the user.",
-                    },
-                },
-                "required": self.required,
-            }
-
-        if isinstance(self.response_type, type) and issubclass(
-            self.response_type, BaseModel
-        ):
-            schema = self.response_type.model_json_schema()
-            return {
-                "type": "object",
-                "properties": schema["properties"],
-                "required": schema.get("required", self.required),
-            }
-
-        return self._create_type_schema(self.response_type)
-
-    def _create_type_schema(self, type_hint: Type) -> dict:
-        """Create a JSON schema for the given type."""
-        origin = get_origin(type_hint)
-        args = get_args(type_hint)
-
-        # Handle primitive types
-        if origin is None:
-            return {
-                "type": "object",
-                "properties": {
-                    "response": {
-                        "type": self.type_mapping.get(type_hint, "string"),
-                        "description": f"Response of type {type_hint.__name__}",
+                        "description": "要发送给模型的提示文本"
                     }
                 },
-                "required": self.required,
-            }
-
-        # Handle List type
-        if origin is list:
-            item_type = args[0] if args else Any
-            return {
-                "type": "object",
-                "properties": {
-                    "response": {
-                        "type": "array",
-                        "items": self._get_type_info(item_type),
-                    }
-                },
-                "required": self.required,
-            }
-
-        # Handle Dict type
-        if origin is dict:
-            value_type = args[1] if len(args) > 1 else Any
-            return {
-                "type": "object",
-                "properties": {
-                    "response": {
-                        "type": "object",
-                        "additionalProperties": self._get_type_info(value_type),
-                    }
-                },
-                "required": self.required,
-            }
-
-        # Handle Union type
-        if origin is Union:
-            return self._create_union_schema(args)
-
-        return self._build_parameters()
-
-    def _get_type_info(self, type_hint: Type) -> dict:
-        """Get type information for a single type."""
-        if isinstance(type_hint, type) and issubclass(type_hint, BaseModel):
-            return type_hint.model_json_schema()
-
-        return {
-            "type": self.type_mapping.get(type_hint, "string"),
-            "description": f"Value of type {getattr(type_hint, '__name__', 'any')}",
-        }
-
-    def _create_union_schema(self, types: tuple) -> dict:
-        """Create schema for Union types."""
-        return {
-            "type": "object",
-            "properties": {
-                "response": {"anyOf": [self._get_type_info(t) for t in types]}
+                "required": ["prompt"]
             },
-            "required": self.required,
-        }
+            **data
+        )
 
-    async def execute(self, required: list | None = None, **kwargs) -> Any:
-        """Execute the chat completion with type conversion.
+    async def execute(self, prompt: str) -> str:
+        """执行聊天完成。
 
-        Args:
-            required: List of required field names or None
-            **kwargs: Response data
+        参数:
+            prompt: 要发送给模型的提示文本
 
-        Returns:
-            Converted response based on response_type
+        返回:
+            str: 模型生成的回复
         """
-        required = required or self.required
-
-        # Handle case when required is a list
-        if isinstance(required, list) and len(required) > 0:
-            if len(required) == 1:
-                required_field = required[0]
-                result = kwargs.get(required_field, "")
-            else:
-                # Return multiple fields as a dictionary
-                return {field: kwargs.get(field, "") for field in required}
-        else:
-            required_field = "response"
-            result = kwargs.get(required_field, "")
-
-        # Type conversion logic
-        if self.response_type == str:
-            return result
-
-        if isinstance(self.response_type, type) and issubclass(
-            self.response_type, BaseModel
-        ):
-            return self.response_type(**kwargs)
-
-        if get_origin(self.response_type) in (list, dict):
-            return result  # Assuming result is already in correct format
-
         try:
-            return self.response_type(result)
-        except (ValueError, TypeError):
-            return result
+            # 尝试使用OpenAI API
+            try:
+                import openai
+                
+                # 检查是否设置了API密钥
+                api_key = os.environ.get("OPENAI_API_KEY")
+                if not api_key:
+                    logger.warning("未设置OPENAI_API_KEY环境变量，尝试使用其他方法")
+                    raise ImportError("未设置OPENAI_API_KEY")
+                
+                # 创建客户端
+                client = openai.OpenAI(api_key=api_key)
+                
+                # 调用API
+                response = client.chat.completions.create(
+                    model="gpt-3.5-turbo",
+                    messages=[
+                        {"role": "system", "content": "你是一个有用的AI助手。"},
+                        {"role": "user", "content": prompt}
+                    ],
+                    max_tokens=1000
+                )
+                
+                # 提取回复内容
+                if hasattr(response, 'choices') and len(response.choices) > 0:
+                    if hasattr(response.choices[0], 'message') and hasattr(response.choices[0].message, 'content'):
+                        return response.choices[0].message.content
+                    else:
+                        return str(response.choices[0])
+                else:
+                    return str(response)
+            
+            except (ImportError, Exception) as e:
+                logger.warning(f"使用OpenAI API失败: {str(e)}，尝试使用本地模型")
+                
+                # 尝试使用langchain
+                try:
+                    from langchain_openai import ChatOpenAI
+                    
+                    chat = ChatOpenAI(model="gpt-3.5-turbo")
+                    result = chat.invoke(prompt)
+                    return result.content
+                
+                except Exception as e:
+                    logger.warning(f"使用langchain失败: {str(e)}，尝试使用Anthropic")
+                    
+                    # 尝试使用Anthropic
+                    try:
+                        from langchain_anthropic import ChatAnthropic
+                        
+                        anthropic_api_key = os.environ.get("ANTHROPIC_API_KEY")
+                        if not anthropic_api_key:
+                            logger.warning("未设置ANTHROPIC_API_KEY环境变量，尝试使用其他方法")
+                            raise ImportError("未设置ANTHROPIC_API_KEY")
+                        
+                        chat = ChatAnthropic(model="claude-3-haiku-20240307")
+                        result = chat.invoke(prompt)
+                        return result.content
+                    
+                    except Exception as e:
+                        logger.warning(f"使用Anthropic失败: {str(e)}，尝试使用Google")
+                        
+                        # 尝试使用Google Gemini
+                        try:
+                            from langchain_google_genai import ChatGoogleGenerativeAI
+                            
+                            google_api_key = os.environ.get("GOOGLE_API_KEY")
+                            if not google_api_key:
+                                logger.warning("未设置GOOGLE_API_KEY环境变量，尝试使用其他方法")
+                                raise ImportError("未设置GOOGLE_API_KEY")
+                            
+                            chat = ChatGoogleGenerativeAI(model="gemini-pro")
+                            result = chat.invoke(prompt)
+                            return result.content
+                        
+                        except Exception as e:
+                            logger.warning(f"使用Google Gemini失败: {str(e)}，尝试使用本地模型")
+                            
+                            # 尝试使用本地模型
+                            try:
+                                import torch
+                                from transformers import AutoModelForCausalLM, AutoTokenizer
+                                
+                                # 使用较小的模型，适合本地运行
+                                model_name = "TinyLlama/TinyLlama-1.1B-Chat-v1.0"
+                                
+                                tokenizer = AutoTokenizer.from_pretrained(model_name)
+                                model = AutoModelForCausalLM.from_pretrained(
+                                    model_name, 
+                                    torch_dtype=torch.float16,
+                                    device_map="auto"
+                                )
+                                
+                                # 准备输入
+                                messages = [
+                                    {"role": "system", "content": "你是一个有用的AI助手。"},
+                                    {"role": "user", "content": prompt}
+                                ]
+                                
+                                # 将消息格式化为模型可接受的格式
+                                input_text = ""
+                                for msg in messages:
+                                    if msg["role"] == "system":
+                                        input_text += f"<|system|>\n{msg['content']}\n"
+                                    elif msg["role"] == "user":
+                                        input_text += f"<|user|>\n{msg['content']}\n"
+                                    elif msg["role"] == "assistant":
+                                        input_text += f"<|assistant|>\n{msg['content']}\n"
+                                
+                                input_text += "<|assistant|>\n"
+                                
+                                # 生成回复
+                                inputs = tokenizer(input_text, return_tensors="pt").to(model.device)
+                                outputs = model.generate(
+                                    inputs["input_ids"],
+                                    max_new_tokens=500,
+                                    temperature=0.7,
+                                    do_sample=True
+                                )
+                                
+                                # 解码并返回生成的文本
+                                generated_text = tokenizer.decode(outputs[0], skip_special_tokens=True)
+                                
+                                # 提取助手的回复
+                                assistant_response = generated_text.split("<|assistant|>\n")[-1].strip()
+                                return assistant_response
+                            
+                            except Exception as e:
+                                logger.warning(f"使用本地模型失败: {str(e)}，返回简单回复")
+                                
+                                # 如果所有方法都失败，返回一个简单的回复
+                                return f"""
+我收到了你的问题: '{prompt}'。
+
+由于无法连接到任何外部或本地模型，我无法生成详细回复。这可能是由于以下原因：
+
+1. 未设置任何API密钥（OpenAI、Anthropic、Google）
+2. 网络连接问题
+3. 本地环境不支持运行模型
+
+请尝试以下解决方案：
+- 设置OPENAI_API_KEY、ANTHROPIC_API_KEY或GOOGLE_API_KEY环境变量
+- 检查网络连接
+- 安装必要的依赖包（openai、langchain-openai、langchain-anthropic、langchain-google-genai、transformers、torch）
+
+或者，您可以直接向我提问，我会尽力提供帮助。
+"""
+        
+        except Exception as e:
+            logger.error(f"创建聊天完成时出错: {str(e)}")
+            return f"生成回复时出错: {str(e)}"

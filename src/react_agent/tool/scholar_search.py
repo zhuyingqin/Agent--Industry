@@ -37,13 +37,10 @@ from react_agent.tool.base import BaseTool
 
 
 class ScholarSearch(BaseTool):
-    """在 Google Scholar 上搜索学术文献并总结结果的工具。"""
+    """学术搜索工具。"""
 
     name: str = "scholar_search"
-    description: str = """在 Google Scholar 上搜索学术文献并总结结果。
-使用此工具可以搜索特定主题的学术文献，并获取文献的摘要、作者、发表年份等信息。
-该工具还可以对搜索结果进行总结，提供对该主题的研究概述。
-"""
+    description: str = "搜索学术论文和研究资料。"
     parameters: dict = {
         "type": "object",
         "properties": {

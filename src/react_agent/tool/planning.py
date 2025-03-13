@@ -12,13 +12,10 @@ The tool provides functionality for creating plans, updating plan steps, and tra
 
 
 class PlanningTool(BaseTool):
-    """
-    A planning tool that allows the agent to create and manage plans for solving complex tasks.
-    The tool provides functionality for creating plans, updating plan steps, and tracking progress.
-    """
+    """计划工具。"""
 
     name: str = "planning"
-    description: str = _PLANNING_TOOL_DESCRIPTION
+    description: str = "管理任务执行计划。"
     parameters: dict = {
         "type": "object",
         "properties": {

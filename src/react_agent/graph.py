@@ -124,7 +124,7 @@ builder.add_conditional_edges(
 # 从工具节点返回到模型节点
 builder.add_edge("tools", "call_model")
 
-# 编译图
+# 编译图 - 不使用任何不支持的参数
 graph = builder.compile()
 
 # 设置图的名称

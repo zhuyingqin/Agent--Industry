@@ -7,11 +7,13 @@ from react_agent.tool.base import BaseTool
 
 
 class GoogleSearch(BaseTool):
+    """Google搜索工具。"""
+    
     name: str = "google_search"
-    description: str = """Perform a Google search and return a list of relevant links.
-Use this tool when you need to find information on the web, get up-to-date data, or research specific topics.
-The tool returns a list of URLs that match the search query.
-"""
+    description: str = """使用Google搜索引擎查找信息。执行 Google 搜索并返回相关链接列表。
+                        当您需要在网络上查找信息、获取最新数据或研究特定主题时，请使用此工具。
+                        该工具返回与搜索查询匹配的 URL 列表"""
+    
     parameters: dict = {
         "type": "object",
         "properties": {

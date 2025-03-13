@@ -5,9 +5,9 @@ from pydantic import BaseModel, Field
 
 
 class BaseTool(ABC, BaseModel):
-    name: str
-    description: str
-    parameters: Optional[dict] = None
+    name: str = Field(..., description="工具的名称")
+    description: str = Field(..., description="工具的描述")
+    parameters: Optional[dict] = Field(default=None, description="工具的参数定义")
 
     class Config:
         arbitrary_types_allowed = True

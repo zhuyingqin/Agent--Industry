@@ -45,6 +45,38 @@ The agent comes with several built-in tools:
 - **ScholarSearch**: Search academic literature on Google Scholar and summarize findings
 - **Planning**: Create and manage execution plans for complex tasks
 
+### Browser Search Function
+
+We've added a powerful browser search function, allowing the agent to:
+
+1. **Automatically recognize search input fields**: It can recognize various common search input fields, including those from popular websites like Baidu, Google, and GitHub.
+2. **Enter search terms**: It automatically enters the search term specified by the user into the search input field.
+3. **Submit search requests**: It supports both clicking the search button or submitting a form to execute the search.
+4. **Retrieve search results**: It waits for the search results to load and returns the page content.
+
+#### Usage
+
+```python
+# Create an instance of the BrowserUseTool
+browser_tool = BrowserUseTool()
+
+# Execute search
+result = await browser_tool.execute(
+    url='https://www.baidu.com',  # URL of the website to search
+    task='Search for Python tutorials on Baidu',  # Task description
+    action='search',  # Specify the action as search
+    parameters={'search_query': 'Python tutorials'}  # Search query term
+)
+```
+
+#### Supported Websites
+
+The current version has been tested on the following websites:
+
+- **Baidu**: It can accurately recognize search input fields and execute search operations.
+- **GitHub**: It can recognize search input fields and submit buttons to execute search operations.
+- **Google**: It can execute search operations using a generic method by recognizing search elements.
+
 ## Getting Started
 
 Assuming you have already [installed LangGraph Studio](https://github.com/langchain-ai/langgraph-studio?tab=readme-ov-file#download), to set up:

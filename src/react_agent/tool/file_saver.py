@@ -6,11 +6,11 @@ from react_agent.tool.base import BaseTool
 
 
 class FileSaver(BaseTool):
+    """文件保存工具。"""
+    
     name: str = "file_saver"
-    description: str = """Save content to a local file at a specified path.
-Use this tool when you need to save text, code, or generated content to a file on the local filesystem.
-The tool accepts content and a file path, and saves the content to that location.
-"""
+    description: str = "保存内容到文件。"
+    
     parameters: dict = {
         "type": "object",
         "properties": {
