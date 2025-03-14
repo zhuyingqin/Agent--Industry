@@ -9,7 +9,20 @@ from typing import Any, Dict, List, Optional, Callable
 from langchain_core.tools import tool
 import asyncio
 
+# 导入所有工具类
+from react_agent.tool.base import BaseTool
+from react_agent.tool.bash import Bash
+from react_agent.tool.create_chat_completion import CreateChatCompletion
+from react_agent.tool.planning import PlanningTool
+from react_agent.tool.str_replace_editor import StrReplaceEditor
+from react_agent.tool.terminate import Terminate
+from react_agent.tool.tool_collection import ToolCollection
+from react_agent.tool.google_search import GoogleSearch
+from react_agent.tool.python_execute import PythonExecute
+from react_agent.tool.run import Run
+from react_agent.tool.file_saver import FileSaver
 from react_agent.tool.browser_use_tool import BrowserUseTool
+from react_agent.tool.scholar_search import ScholarSearch
 
 # 配置日志记录
 logging.basicConfig(level=logging.INFO, 
@@ -115,9 +128,108 @@ async def web_search_wrapper(query: str) -> str:
     """使用Web搜索包装器搜索信息。"""
     return f"执行Web搜索: {query}"
 
+@tool
+async def bash_execute(command: str) -> str:
+    """
+    执行Bash命令并返回结果。
+    
+    参数:
+        command: 要执行的Bash命令
+        
+    返回:
+        str: 命令执行结果
+    """
+    bash_tool = Bash()
+    result = await bash_tool.execute(command=command)
+    return result.content
+
+@tool
+async def python_code_execute(code: str, timeout: int = 5) -> str:
+    """
+    执行Python代码并返回结果。
+    
+    参数:
+        code: 要执行的Python代码
+        timeout: 执行超时时间（秒）
+        
+    返回:
+        str: 代码执行结果
+    """
+    python_tool = PythonExecute()
+    result = await python_tool.execute(code=code, timeout=timeout)
+    return str(result)
+
+@tool
+async def scholar_search_execute(query: str, num_results: int = 5) -> str:
+    """
+    在Google Scholar上搜索学术文献并返回结果。
+    
+    参数:
+        query: 搜索查询
+        num_results: 返回结果数量
+        
+    返回:
+        str: 搜索结果摘要
+    """
+    scholar_tool = ScholarSearch()
+    result = await scholar_tool.execute(query=query, num_results=num_results)
+    return result
+
+@tool
+async def planning_execute(task: str) -> str:
+    """
+    为复杂任务创建执行计划。
+    
+    参数:
+        task: 任务描述
+        
+    返回:
+        str: 执行计划
+    """
+    planning_tool = PlanningTool()
+    result = await planning_tool.execute(task=task)
+    return result
+
+@tool
+async def google_search_execute(query: str) -> str:
+    """
+    使用Google搜索信息。
+    
+    参数:
+        query: 搜索查询
+        
+    返回:
+        str: 搜索结果
+    """
+    google_tool = GoogleSearch()
+    result = await google_tool.execute(query=query)
+    return result
+
+@tool
+async def file_save(filename: str, content: str) -> str:
+    """
+    保存内容到文件。
+    
+    参数:
+        filename: 文件名
+        content: 文件内容
+        
+    返回:
+        str: 操作结果
+    """
+    file_tool = FileSaver()
+    result = await file_tool.execute(filename=filename, content=content)
+    return result
+
 # 定义所有可用的工具函数
 TOOLS: List[Callable[..., Any]] = [
     simple_search,  # 简单搜索工具，更可靠
     web_search_wrapper,  # 改进的网页搜索工具
-    browser_use,
+    browser_use,  # 浏览器工具
+    bash_execute,  # Bash命令执行工具
+    python_code_execute,  # Python代码执行工具
+    scholar_search_execute,  # 学术搜索工具
+    planning_execute,  # 规划工具
+    google_search_execute,  # Google搜索工具
+    file_save,  # 文件保存工具
 ] 
