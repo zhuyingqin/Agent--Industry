@@ -8,7 +8,7 @@
 from typing import Dict, List, Any
 
 # 导出状态类
-from sub_graph.state import (
+from .state import (
     Logs,
     FailureAnalysisState,
     QuestionSummarizationState,
@@ -16,7 +16,7 @@ from sub_graph.state import (
 )
 
 # 导出图构建器和已编译的图
-from sub_graph.graph import (
+from .graph import (
     fa_builder,  # 故障分析子图构建器
     qs_builder,  # 问题总结子图构建器
     entry_builder,  # 入口图构建器
@@ -24,7 +24,7 @@ from sub_graph.graph import (
 )
 
 # 导出主要函数
-from sub_graph.graph import (
+from .graph import (
     get_failures,
     generate_summary,
     send_to_slack,

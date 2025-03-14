@@ -5,7 +5,7 @@
 包括故障分析和问题总结。
 """
 
-from sub_graph import run_graph, graph
+from src.sub_graph import run_graph, graph
 from pprint import pprint
 
 def main():
